@@ -1,0 +1,4 @@
+cx_Oracle
+reportlab
+streamlit
+
