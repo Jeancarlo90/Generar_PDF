@@ -1,12 +1,16 @@
 import os
 import cx_Oracle
+from dotenv import load_dotenv
 
-# Configuración de conexión (mejor usar variables de entorno)
-DB_HOST = "172.17.100.122"
-DB_PORT = 1521
-DB_SERVICE = "UPCHP"
-DB_USER = "USR_IURQUIAGA"
-DB_PASSWORD = "Y6F3n2%G"
+# Cargar variables de entorno desde un archivo .env
+load_dotenv()
+
+# Configuración de conexión desde variables de entorno
+DB_HOST = os.getenv("DB_HOST", "172.17.100.122")
+DB_PORT = os.getenv("DB_PORT", 1521)
+DB_SERVICE = os.getenv("DB_SERVICE", "UPCHP")
+DB_USER = os.getenv("DB_USER", "USR_IURQUIAGA")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "Y6F3n2%G")
 
 def conectar_oracle():
     """Establece conexión con la base de datos Oracle."""
@@ -15,7 +19,8 @@ def conectar_oracle():
         conexion = cx_Oracle.connect(user=DB_USER, password=DB_PASSWORD, dsn=dsn)
         return conexion
     except cx_Oracle.Error as e:
-        print(f"❌ Error de conexión a Oracle: {e}")
+        error, = e.args  # Desempaquetar el error
+        print(f"❌ Error de conexión a Oracle: {error.message}")
         return None
 
 def obtener_datos(num_identificacion):
@@ -63,7 +68,8 @@ def obtener_datos(num_identificacion):
             return datos
 
     except cx_Oracle.Error as e:
-        print(f"❌ Error en la consulta: {e}")
+        error, = e.args
+        print(f"❌ Error en la consulta: {error.message}")
         return []
     finally:
         conexion.close()

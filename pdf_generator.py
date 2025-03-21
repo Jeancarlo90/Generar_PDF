@@ -73,7 +73,7 @@ def generar_pdf(datos):
 
 def descargar_zip(datos):
     """Genera un ZIP con el PDF en memoria y permite su descarga."""
-    
+
     # 📌 Generar el PDF en memoria
     pdf_bytes = generar_pdf(datos)
     
@@ -90,20 +90,25 @@ def descargar_zip(datos):
 # 📌 Interfaz en Streamlit
 st.title("Generador de Reportes en PDF")
 
-if st.button("Generar y Descargar ZIP"):
-    datos = [
-        {"COD_NIVEL": "01", "COD_MATERIA": "MAT101", "COD_PLAN_ESTUDIO": "2025", 
-         "NOM_MATERIA": "Matemáticas Avanzadas", "NOTA": "18", "UNI_CREDITO": "4"},
-        {"COD_NIVEL": "01", "COD_MATERIA": "FIS102", "COD_PLAN_ESTUDIO": "2025", 
-         "NOM_MATERIA": "Física General", "NOTA": "17", "UNI_CREDITO": "3"}
-    ]
+# 📌 Verificar si hay datos antes de intentar generar el reporte
+datos = [
+    {"COD_NIVEL": "01", "COD_MATERIA": "MAT101", "COD_PLAN_ESTUDIO": "2025", 
+     "NOM_MATERIA": "Matemáticas Avanzadas", "NOTA": "18", "UNI_CREDITO": "4"},
+    {"COD_NIVEL": "01", "COD_MATERIA": "FIS102", "COD_PLAN_ESTUDIO": "2025", 
+     "NOM_MATERIA": "Física General", "NOTA": "17", "UNI_CREDITO": "3"}
+]
 
-    zip_file = descargar_zip(datos)
+if not datos:
+    st.warning("⚠️ No se encontraron datos para generar el reporte.")
+else:
+    # 📌 Barra de progreso
+    with st.spinner("Generando archivo..."):
+        zip_file = descargar_zip(datos)
 
-    # 📌 Descargar el ZIP en Streamlit
-    st.download_button(
-        label="Descargar Reporte en ZIP 📂",
-        data=zip_file,
-        file_name="reporte.zip",
-        mime="application/zip"
-    )
+        # 📌 Descargar el ZIP en Streamlit
+        st.download_button(
+            label="Descargar Reporte en ZIP 📂",
+            data=zip_file,
+            file_name="reporte.zip",
+            mime="application/zip"
+        )

@@ -40,7 +40,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def generar_pdf(datos):
-    """Genera un PDF en memoria con los datos académicos."""
+    """Genera un PDF en memoria con los datos académicos por periodo académico."""
     
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
@@ -55,11 +55,13 @@ def generar_pdf(datos):
     if not datos:
         elementos.append(Paragraph("No hay datos disponibles.", estilos["BodyText"]))
     else:
-        encabezados = ["NIVEL", "CURSO", "PLAN", "NOMBRE DE CURSO", "NOTA", "CRÉDITO"]
+        # 📌 Crear encabezados, incluyendo el periodo académico
+        encabezados = ["PERÍODO ACADÉMICO", "NIVEL", "CURSO", "PLAN", "NOMBRE DE CURSO", "NOTA", "CRÉDITO"]
         contenido_tabla = [encabezados]
 
         for item in datos:
             fila = [
+                item.get("PERIODO_ACADEMICO", ""),  # Añadir periodo académico
                 item.get("COD_NIVEL", ""),  
                 item.get("COD_MATERIA", ""),  
                 item.get("COD_PLAN_ESTUDIO", ""),  
@@ -69,8 +71,8 @@ def generar_pdf(datos):
             ]
             contenido_tabla.append(fila)
         
-        tabla = Table(contenido_tabla, colWidths=[60, 80, 80, 200, 60, 60])
-        tabla.setStyle(TableStyle([
+        tabla = Table(contenido_tabla, colWidths=[100, 60, 80, 80, 200, 60, 60])
+        tabla.setStyle(TableStyle([ 
             ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
             ("ALIGN", (0, 0), (-1, -1), "CENTER"),
@@ -82,8 +84,8 @@ def generar_pdf(datos):
         
         elementos.append(tabla)
 
+    # 📌 Pie de página
     elementos.append(Spacer(1, 50))
-
     pie_pagina = Paragraph(
         "Av. Honorio Delgado 430, Urbanización Ingeniería, San Martín de Porres<br/>"
         '<a href="http://www.upch.edu.pe">http://www.upch.edu.pe</a>',
@@ -114,12 +116,16 @@ st.markdown('<p class="title">📄 Generador de Reportes en PDF</p>', unsafe_all
 st.markdown('<p class="subtitle">Crea y descarga un reporte académico en formato PDF dentro de un archivo ZIP.</p>', unsafe_allow_html=True)
 st.write("---")
 
+# 📌 Solicitar el periodo académico como entrada
+periodo_academico = st.text_input("Ingrese el Periodo Académico:", value="2025-1")
+
 if st.button("📥 Generar y Descargar ZIP"):
     with st.spinner("Generando reporte... 🛠️"):
+        # Datos de ejemplo con periodo académico
         datos = [
-            {"COD_NIVEL": "01", "COD_MATERIA": "MAT101", "COD_PLAN_ESTUDIO": "2025", 
+            {"PERIODO_ACADEMICO": periodo_academico, "COD_NIVEL": "01", "COD_MATERIA": "MAT101", "COD_PLAN_ESTUDIO": "2025", 
              "NOM_MATERIA": "Matemáticas Avanzadas", "NOTA": "18", "UNI_CREDITO": "4"},
-            {"COD_NIVEL": "01", "COD_MATERIA": "FIS102", "COD_PLAN_ESTUDIO": "2025", 
+            {"PERIODO_ACADEMICO": periodo_academico, "COD_NIVEL": "01", "COD_MATERIA": "FIS102", "COD_PLAN_ESTUDIO": "2025", 
              "NOM_MATERIA": "Física General", "NOTA": "17", "UNI_CREDITO": "3"}
         ]
 
