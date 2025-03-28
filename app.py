@@ -85,7 +85,7 @@ if st.button("Generar Reporte"):
         PE.FEC_INICIO,
         H.COD_PERIODO,
         P.NUM_NIVEL,
-        H.COD_MATERIA;
+        H.COD_MATERIA
     """
     cursor.execute(query, dni=dni)
     results = cursor.fetchall()
